@@ -1,21 +1,18 @@
 pub fn collatz(n: u64) -> Option<u64> {
-  if n == 1 {
-    return Some(0);
-  }
-  if n == 0 {
-    return None;
-  }
-  let mut num_of_steps = 1;
-  let mut num = n;
-  loop {
-    if num == 1 {
-      return Some(num_of_steps - 1);
+  match n {
+    1 => Some(0),
+    0 => None,
+    _ => {
+      let num_of_steps = (0..)
+        .try_fold((n, 0), |(num, num_of_steps), _| match num {
+          1 => Err(num_of_steps),
+          x if x % 2 == 0 => Ok((num / 2, num_of_steps + 1)),
+          _ => Ok((3 * num + 1, num_of_steps + 1)),
+        })
+        .err()
+        .unwrap();
+
+      Some(num_of_steps)
     }
-    println!("{}", num);
-    match num % 2 {
-      0 => num = num / 2,
-      _ => num = 3 * num + 1,
-    }
-    num_of_steps += 1;
   }
 }
